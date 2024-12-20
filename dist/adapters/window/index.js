@@ -1,4 +1,5 @@
 'use client';
+'use no memo';
 export const useWindowAdapter = () => {
     console.debug('Navigation is not available, using window adapter! Some features may not work.');
     return {

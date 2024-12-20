@@ -1,4 +1,5 @@
 'use client';
+'use no memo';
 import { useRouter, usePathname } from 'next/navigation';
 export const useNextAdapter = () => {
     const router = useRouter();

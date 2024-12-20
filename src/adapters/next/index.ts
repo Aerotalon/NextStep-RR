@@ -1,4 +1,6 @@
 'use client';
+'use no memo';
+
 import { useRouter, usePathname } from 'next/navigation';
 import type { NavigationAdapter } from '../../types/navigation';
 

@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNextStep } from './NextStepContext';
 import { motion, useInView } from 'motion/react';
-import { useWindowAdapter } from './adapters/window';
+import { useAutoAdapter } from './adapters/auto';
 
 // Types
 import { NextStepProps } from './types';
@@ -24,7 +24,7 @@ const NextStep: React.FC<NextStepProps> = ({
   onSkip = () => {},
   displayArrow = true,
   clickThroughOverlay = false,
-  navigationAdapter = useWindowAdapter,
+  navigationAdapter,
 }) => {
   const { currentTour, currentStep, setCurrentStep, isNextStepVisible, closeNextStep } =
     useNextStep();
@@ -47,7 +47,8 @@ const NextStep: React.FC<NextStepProps> = ({
   const [viewportRect, setViewportRect] = useState<DOMRect | null>(null);
   const [scrollableParent, setScrollableParent] = useState<Element | null>(null);
 
-  const router = navigationAdapter();
+  const autoAdapter = useAutoAdapter();
+  const router = navigationAdapter || autoAdapter;
 
   // - -
   // Handle pop state

@@ -1,7 +1,8 @@
 'use client';
 'use no memo';
 
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import { useAutoAdapter } from './adapters/auto';
 
 // Types
 import { NextStepContextType } from './types';
@@ -23,13 +24,15 @@ const useNextStep = () => {
   if (context === undefined) {
     throw new Error('useNextStep must be used within a NextStepProvider');
   }
-  return context;
+  return context; 
 };
 
 const NextStepProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentTour, setCurrentTour] = useState<string | null>(null);
   const [currentStep, setCurrentStepState] = useState(0);
   const [isNextStepVisible, setNextStepVisible] = useState(false);
+
+  const router = useAutoAdapter();
 
   const setCurrentStep = useCallback((step: number, delay?: number) => {
     if (delay) {
@@ -54,6 +57,7 @@ const NextStepProvider: React.FC<{ children: React.ReactNode }> = ({ children })
     setNextStepVisible(true);
   }, []);
 
+  
   return (
     <NextStepContext.Provider
       value={{
@@ -63,6 +67,7 @@ const NextStepProvider: React.FC<{ children: React.ReactNode }> = ({ children })
         closeNextStep,
         startNextStep,
         isNextStepVisible,
+        router,
       }}
     >
       {children}

@@ -7,6 +7,7 @@ export interface NextStepContextType {
     closeNextStep: () => void;
     startNextStep: (tourName: string) => void;
     isNextStepVisible: boolean;
+    router: NavigationAdapter;
 }
 export interface Step {
     icon: React.ReactNode | string | null;

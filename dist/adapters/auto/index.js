@@ -1,34 +1,34 @@
 'use client';
 'use no memo';
+import { useState } from 'react';
 import { useNextAdapter } from '../next';
 import { useReactRouterAdapter } from '../react-router';
 import { useWindowAdapter } from '../window';
+const ReactRouterAdapter = () => useReactRouterAdapter();
+const NextAdapter = () => useNextAdapter();
+const WindowAdapter = () => useWindowAdapter();
+const SSRFallbackAdapter = () => ({ push: () => { }, getCurrentPath: () => '/' });
 export const useAutoAdapter = () => {
-    const isClient = typeof window !== 'undefined';
-    if (!isClient) {
-        return {
-            push: () => { },
-            getCurrentPath: () => '/',
-        };
-    }
-    if (window.__reactRouterVersion) {
-        console.log('react-router-adapter found');
-        console.log('react-router-adapter found');
-        console.log('react-router-adapter found');
-        console.log('react-router-adapter found');
-        console.log('react-router-adapter found');
-        return useReactRouterAdapter();
-    }
-    else if (window.__NEXT_DATA__) {
-        console.log('next-adapter found');
-        console.log('next-adapter found');
-        console.log('next-adapter found');
-        console.log('next-adapter found');
-        console.log('next-adapter found');
-        console.log('next-adapter found');
-        return useNextAdapter();
-    }
-    else {
-        return useWindowAdapter();
+    const [adapterType] = useState(() => {
+        console.log('NextStep: Initial adapter selection');
+        const isClient = typeof window !== 'undefined';
+        if (!isClient)
+            return 'none';
+        if (window.__reactRouterVersion)
+            return 'react-router';
+        if (window.__NEXT_DATA__)
+            return 'next';
+        return 'window';
+    });
+    console.log('NextStep: Adapter type:', adapterType);
+    switch (adapterType) {
+        case 'react-router':
+            return ReactRouterAdapter();
+        case 'next':
+            return NextAdapter();
+        case 'window':
+            return WindowAdapter();
+        default:
+            return SSRFallbackAdapter();
     }
 };

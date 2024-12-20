@@ -9,6 +9,7 @@ export interface NextStepContextType {
   closeNextStep: () => void;
   startNextStep: (tourName: string) => void;
   isNextStepVisible: boolean;
+  router: NavigationAdapter;
 }
 
 // Step

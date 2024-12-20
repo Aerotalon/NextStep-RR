@@ -4,7 +4,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNextStep } from './NextStepContext';
 import { motion, useInView } from 'motion/react';
-import { useAutoAdapter } from './adapters/auto';
 
 // Types
 import { NextStepProps } from './types';
@@ -26,7 +25,7 @@ const NextStep: React.FC<NextStepProps> = ({
   clickThroughOverlay = false,
   navigationAdapter,
 }) => {
-  const { currentTour, currentStep, setCurrentStep, isNextStepVisible, closeNextStep } =
+  const { currentTour, currentStep, setCurrentStep, isNextStepVisible, closeNextStep, router: defaultRouter } =
     useNextStep();
 
   const currentTourSteps = steps.find((tour) => tour.tour === currentTour)?.steps;
@@ -47,8 +46,8 @@ const NextStep: React.FC<NextStepProps> = ({
   const [viewportRect, setViewportRect] = useState<DOMRect | null>(null);
   const [scrollableParent, setScrollableParent] = useState<Element | null>(null);
 
-  const autoAdapter = useAutoAdapter();
-  const router = navigationAdapter || autoAdapter;
+  // Allow for custom navigation adapter and fallback to auto detection when not set
+  const router = navigationAdapter || defaultRouter;
 
   // - -
   // Handle pop state

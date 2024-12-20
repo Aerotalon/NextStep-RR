@@ -2,6 +2,7 @@
 'use no memo';
 import { jsx as _jsx } from "react/jsx-runtime";
 import { createContext, useContext, useState, useCallback } from 'react';
+import { useAutoAdapter } from './adapters/auto';
 // Example Hooks Usage:
 // const { setCurrentStep, closeNextStep, startNextStep } = useNextStep();
 // // To trigger a specific step
@@ -21,6 +22,7 @@ const NextStepProvider = ({ children }) => {
     const [currentTour, setCurrentTour] = useState(null);
     const [currentStep, setCurrentStepState] = useState(0);
     const [isNextStepVisible, setNextStepVisible] = useState(false);
+    const router = useAutoAdapter();
     const setCurrentStep = useCallback((step, delay) => {
         if (delay) {
             setTimeout(() => {
@@ -49,6 +51,7 @@ const NextStepProvider = ({ children }) => {
             closeNextStep,
             startNextStep,
             isNextStepVisible,
+            router,
         }, children: children }));
 };
 export { NextStepProvider, useNextStep };

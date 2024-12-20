@@ -4,11 +4,10 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNextStep } from './NextStepContext';
 import { motion, useInView } from 'motion/react';
-import { useAutoAdapter } from './adapters/auto';
 import DefaultCard from './DefaultCard';
 import DynamicPortal from './DynamicPortal';
 const NextStep = ({ children, steps, shadowRgb = '0, 0, 0', shadowOpacity = '0.2', cardTransition = { ease: 'anticipate', duration: 0.6 }, cardComponent: CardComponent, onStart = () => { }, onStepChange = () => { }, onComplete = () => { }, onSkip = () => { }, displayArrow = true, clickThroughOverlay = false, navigationAdapter, }) => {
-    const { currentTour, currentStep, setCurrentStep, isNextStepVisible, closeNextStep } = useNextStep();
+    const { currentTour, currentStep, setCurrentStep, isNextStepVisible, closeNextStep, router: defaultRouter } = useNextStep();
     const currentTourSteps = steps.find((tour) => tour.tour === currentTour)?.steps;
     const [elementToScroll, setElementToScroll] = useState(null);
     const [pointerPosition, setPointerPosition] = useState(null);
@@ -20,8 +19,8 @@ const NextStep = ({ children, steps, shadowRgb = '0, 0, 0', shadowOpacity = '0.2
     const [viewport, setViewport] = useState(null);
     const [viewportRect, setViewportRect] = useState(null);
     const [scrollableParent, setScrollableParent] = useState(null);
-    const autoAdapter = useAutoAdapter();
-    const router = navigationAdapter || autoAdapter;
+    // Allow for custom navigation adapter and fallback to auto detection when not set
+    const router = navigationAdapter || defaultRouter;
     // - -
     // Handle pop state
     const handlePopState = useCallback(() => {

@@ -23,6 +23,7 @@ const NextStep: React.FC<NextStepProps> = ({
   displayArrow = true,
   clickThroughOverlay = false,
   navigationAdapter = useWindowAdapter,
+  scrollToTop = true,
 }) => {
   const { currentTour, currentStep, setCurrentStep, isNextStepVisible, closeNextStep } =
     useNextStep();
@@ -299,25 +300,56 @@ const NextStep: React.FC<NextStepProps> = ({
     }
   }, [currentStep, currentTourSteps, isInView, offset, isNextStepVisible]);
 
+  // Separate useEffect for handling scroll behavior on step visibility
   useEffect(() => {
-    if (elementToScroll && !isInView && isNextStepVisible) {
-      console.log('NextStep: Element to Scroll Changed');
+    if (!isNextStepVisible) return;
 
-      const side = checkSideCutOff(currentTourSteps?.[currentStep]?.side || 'right');
-      elementToScroll.scrollIntoView({
-        behavior: 'smooth',
-        block: side.includes('top')
-          ? 'end'
-          : side.includes('bottom')
-          ? 'start'
-          : 'center',
-        inline: 'center',
-      });
+    const step = currentTourSteps?.[currentStep];
+    if (!step) return;
+
+    if (step.selector) {
+      if (elementToScroll && !isInView) {
+        console.log('NextStep: Element to Scroll Changed');
+
+        const side = checkSideCutOff(currentTourSteps?.[currentStep]?.side || 'right');
+        elementToScroll.scrollIntoView({
+          behavior: 'smooth',
+          block: side.includes('top')
+            ? 'end'
+            : side.includes('bottom')
+            ? 'start'
+            : 'center',
+          inline: 'center',
+        });
+      }
     } else {
-      // Scroll to the top of the body
+      if (scrollToTop) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setPointerPosition({
+          x: window.innerWidth / 2,
+          y: window.innerHeight / 2,
+          width: 0,
+          height: 0,
+        });
+      } else {
+        // Keep tooltip in middle of current viewport without scrolling
+        const viewportHeight = window.innerHeight;
+        const currentScroll = window.scrollY;
+        
+        setPointerPosition({
+          x: window.innerWidth / 2,
+          y: currentScroll + (viewportHeight / 2),
+          width: 0,
+          height: 0,
+        });
+      }
+    }
+
+    // Scroll to top when tour completes
+    if (currentTourSteps && currentStep === currentTourSteps.length - 1) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }, [elementToScroll, isInView, isNextStepVisible]);
+  }, [isNextStepVisible, currentStep, currentTourSteps, scrollToTop, isInView, elementToScroll]);
 
   // - -
   // Update pointer position on window resize
